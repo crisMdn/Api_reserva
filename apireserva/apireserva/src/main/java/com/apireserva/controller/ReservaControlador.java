@@ -13,7 +13,7 @@ public class ReservaControlador {
     
     private final ReservaService service; //inyecto la dependencia del servicio, la cual no cambiara
 
-    public ReservaControlador(ReservaServicie service) {
+    public ReservaControlador(ReservaService service) {
         this.service = service; 
 
     } 
@@ -24,7 +24,7 @@ public class ReservaControlador {
     }
 
     @PostMapping //metodo que usara las solicitudes tipo POST, para nuevas reservas
-    public Reserva crear(@RequestBody Reserva reserva) { //body toma el cuerpo de la solitud http y lo convierte en un objeto Java a partir de los datos JSON enviados
+    public Reserva guardar(@RequestBody Reserva reserva) { //body toma el cuerpo de la solitud http y lo convierte en un objeto Java a partir de los datos JSON enviados
         return service.guardar(reserva); 
     }
 
