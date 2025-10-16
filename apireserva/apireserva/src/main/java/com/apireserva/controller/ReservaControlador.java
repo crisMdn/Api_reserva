@@ -6,7 +6,7 @@ import com.apireserva.model.Reserva;
 import com.apireserva.service.ReservaService; 
 
 @RestController //indica a sprint que esto es un controlador
-@RequestMapping("/reservas") //indico al controlador cual es la ruta base, en este caso es reserva
+@RequestMapping("/api/reservas") //indico al controlador cual es la ruta base, en este caso es reserva
 
 
 public class ReservaControlador {
