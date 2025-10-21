@@ -1,5 +1,6 @@
 package com.apireserva.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.apireserva.model.Cliente;
@@ -20,6 +21,7 @@ public class ClienteControlador {
         return service.listar();
     }
 
+    @ResponseStatus(HttpStatus.CREATED) // Devuelve un código de estado 201 (Creado), dato tomado de la guia. 
     @PostMapping
     public Cliente guardar(@RequestBody Cliente cliente) {
         return service.guardar(cliente);

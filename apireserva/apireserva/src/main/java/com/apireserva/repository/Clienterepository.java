@@ -5,3 +5,7 @@ import com.apireserva.model.Cliente;
 
 public interface Clienterepository extends JpaRepository<Cliente, Long> {
 }
+
+
+
+
