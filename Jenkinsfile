@@ -14,15 +14,19 @@ pipeline {
 
         stage('Compilar') {
             steps {
-                echo '⚙️ Ejecutando mvn clean install...'
-                bat 'mvn clean install -DskipTests'
+                dir('apireserva/apireserva') {  //  Ruta exacta donde está el pom.xml
+                    echo '⚙️ Ejecutando mvn clean install...'
+                    bat 'mvn clean install -DskipTests'
+                }
             }
         }
 
         stage('Ejecutar pruebas') {
             steps {
-                echo '🧪 Ejecutando pruebas...'
-                bat 'mvn test'
+                dir('apireserva/apireserva') {  //  misma ruta para ejecutar tests
+                    echo '🧪 Ejecutando pruebas...'
+                    bat 'mvn test'
+                }
             }
         }
     }
