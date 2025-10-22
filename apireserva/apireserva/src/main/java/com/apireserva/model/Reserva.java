@@ -2,6 +2,10 @@ package com.apireserva.model;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 import jakarta.persistence.*; //se usa para marcar la clase como entidad en la bs, y JPA se encargara de maquear la clase a una tabla 
 import lombok.Data; //se usa para generar get,set y otros metodos. 
 
@@ -23,7 +27,9 @@ public class Reserva {
     @JoinColumn(name = "cliente_id") //le decimos a la bs en que columna se guardara la referencia del cliente (el  ID)
     private Cliente cliente; // relación con entidad Cliente; muchos a uno 
 
-    private String fecha;
+    private LocalDateTime fecha; //fechas con formato ISO, igual que el DTE, permite a sql filtrar por fecha/hora en consultas. sin converitr a texto. 
+
+    @Column(length = 25)
     private String servicio; 
 
 }

@@ -8,7 +8,7 @@ import com.apireserva.repository.Reservarepository;
 @Service // Especifico que este es el servicio
 public class ReservaService {
 
-    private final Reservarepository repository; // Inyección del atributo repository
+    private final Reservarepository repository; // Inyección del atributo repository, para que hable con la base de datos. 
 
     public ReservaService(Reservarepository repository) {
         this.repository = repository;
