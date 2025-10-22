@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    tools {
+        maven 'Maven_3.9.11'
+        jdk 'jdk-23'
+    }
     stages {
         stage('Clonar repositorio') {
             steps {
