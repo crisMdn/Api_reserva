@@ -1,9 +1,16 @@
 pipeline {
     agent any
+
     tools {
         maven 'Maven_3.9.11'
-        jdk 'jdk-23'
+        jdk 'JDK17'
     }
+
+    environment {
+        IMAGE_NAME = "api_reserva"
+        IMAGE_TAG = "latest"
+    }
+
     stages {
         stage('Clonar repositorio') {
             steps {
@@ -14,19 +21,35 @@ pipeline {
 
         stage('Compilar') {
             steps {
-                dir('apireserva/apireserva') {  //  Ruta exacta donde está el pom.xml
-                    echo '⚙️ Ejecutando mvn clean install...'
-                    bat 'mvn clean install -DskipTests'
-                }
+                echo '⚙️ Compilando con Maven...'
+                bat 'mvn clean install -DskipTests'
             }
         }
 
         stage('Ejecutar pruebas') {
             steps {
-                dir('apireserva/apireserva') {  //  misma ruta para ejecutar tests
-                    echo '🧪 Ejecutando pruebas...'
-                    bat 'mvn test'
-                }
+                echo '🧪 Ejecutando pruebas...'
+                bat 'mvn test'
+            }
+        }
+
+        stage('Construir imagen Docker') {
+            steps {
+                echo '🐳 Construyendo imagen Docker...'
+                bat """
+                    docker build -t %IMAGE_NAME%:%IMAGE_TAG% -f Dockerfile ./apireserva
+                """
+            }
+        }
+
+        stage('Ejecutar contenedor Docker') {
+            steps {
+                echo '🚀 Ejecutando contenedor Docker...'
+                bat """
+                    docker stop %IMAGE_NAME% || echo "No hay contenedor previo"
+                    docker rm %IMAGE_NAME% || echo "No hay contenedor para eliminar"
+                    docker run -d -p 8080:8080 --name %IMAGE_NAME% %IMAGE_NAME%:%IMAGE_TAG%
+                """
             }
         }
     }
@@ -36,7 +59,7 @@ pipeline {
             echo '✅ Pipeline completado correctamente.'
         }
         failure {
-            echo '❌ Error durante la compilación o pruebas.'
+            echo '❌ Error durante la compilación, pruebas o despliegue.'
         }
     }
 }
