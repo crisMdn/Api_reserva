@@ -12,6 +12,7 @@ pipeline {
     }
 
     stages {
+
         stage('Clonar repositorio') {
             steps {
                 echo '🔄 Clonando repositorio...'
@@ -22,39 +23,50 @@ pipeline {
         stage('Compilar') {
             steps {
                 echo '⚙️ Compilando con Maven...'
-                bat 'mvn clean install -DskipTests'
+                bat '''
+                    cd apireserva\\apireserva
+                    mvn clean install -DskipTests
+                '''
             }
         }
 
         stage('Ejecutar pruebas') {
             steps {
                 echo '🧪 Ejecutando pruebas...'
-                bat 'mvn test'
+                bat '''
+                    cd apireserva\\apireserva
+                    mvn test
+                '''
             }
         }
 
         stage('Construir imagen Docker') {
             steps {
                 echo '🐳 Construyendo imagen Docker...'
-                bat """
-                    docker build -t %IMAGE_NAME%:%IMAGE_TAG% -f Dockerfile ./apireserva
-                """
+                bat '''
+                    cd apireserva
+                    docker build -t %IMAGE_NAME%:%IMAGE_TAG% -f Dockerfile .
+                '''
             }
         }
 
         stage('Ejecutar contenedor Docker') {
             steps {
                 echo '🚀 Ejecutando contenedor Docker...'
-                bat """
+                bat '''
                     docker stop %IMAGE_NAME% || echo "No hay contenedor previo"
                     docker rm %IMAGE_NAME% || echo "No hay contenedor para eliminar"
                     docker run -d -p 8080:8080 --name %IMAGE_NAME% %IMAGE_NAME%:%IMAGE_TAG%
-                """
+                '''
             }
         }
     }
 
     post {
+        always {
+            echo '🧹 Limpiando recursos Docker...'
+            bat 'docker system prune -f'
+        }
         success {
             echo '✅ Pipeline completado correctamente.'
         }

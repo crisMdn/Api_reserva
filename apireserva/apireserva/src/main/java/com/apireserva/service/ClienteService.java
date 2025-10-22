@@ -1,6 +1,6 @@
 package com.apireserva.service;
 
-import lombok.AllArgsConstructor; // genera constructores para todo tipo de clase. 
+//import lombok.AllArgsConstructor; // genera constructores para todo tipo de clase. 
 import lombok.RequiredArgsConstructor; //genera lombok constructores automaticos. 
 import java.util.List;
 import org.springframework.stereotype.Service;
