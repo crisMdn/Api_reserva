@@ -44,7 +44,6 @@ pipeline {
             steps {
                 echo '🐳 Construyendo imagen Docker...'
                 bat '''
-                    cd apireserva
                     docker build -t %IMAGE_NAME%:%IMAGE_TAG% -f Dockerfile .
                 '''
             }
