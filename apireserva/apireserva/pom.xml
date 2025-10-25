@@ -51,6 +51,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- MOdelMapper-DTO -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
         <!-- Validaciones con Jakarta Bean Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

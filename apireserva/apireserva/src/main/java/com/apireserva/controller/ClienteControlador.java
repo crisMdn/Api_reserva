@@ -1,16 +1,19 @@
 package com.apireserva.controller;
 
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus;//representa codigos de estado hhtp(200, 2001, 401, etc). 
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import com.apireserva.model.Cliente;
+
+
+// ✅ Importamos el DTO en lugar del modelo
+import com.apireserva.dto.ClienteDTO;
+//import com.apireserva.model.Cliente; (ANULADO)
 import com.apireserva.service.ClienteService;
 
 
 @RestController
-@RequestMapping("/api/clientes") //cuando alguien haga una http se vaya a buscar a esta ruta
+@RequestMapping("/api/clientes") //cuando alguien haga una http se vaya a buscar a esta ruta base. 
 @RequiredArgsConstructor
 public class ClienteControlador {
 
@@ -18,18 +21,20 @@ public class ClienteControlador {
 
     //usare lombok import y la @ para evitar el constructor como se hizo en ClienteService
     
-
+    //ahora devuelve una lista de clientes y no desde model, si no desde DTO. 
     @GetMapping
-    public List<Cliente> listar() {
+    public List<ClienteDTO> listar() {
         return service.listar();
     }
 
+    //POST → recibe un DTO en el cuerpo de la petición y lo guarda
     @ResponseStatus(HttpStatus.CREATED) // Devuelve un código de estado 201 (Creado), dato tomado de la guia. 
     @PostMapping
-    public Cliente guardar(@RequestBody Cliente cliente) {
-        return service.guardar(cliente);
+    public ClienteDTO guardar(@RequestBody ClienteDTO clienteDTO) {
+        return service.guardar(clienteDTO);
     }
 
+    //no cambia por que solo requiere el ID
     @ResponseStatus(HttpStatus.NO_CONTENT) // Devuelve un código de estado. 
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {

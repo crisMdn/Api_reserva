@@ -10,7 +10,7 @@ import lombok.*;
 @Builder //implementa patron builden que permite construir objetos de forma mas legible
 public class ClienteDTO {
     @NotBlank(message = "el nombre es obligatorio") //validacion para nombre
-    @Size(max = 80, message = "Nombre muy largo") //validacion con un maximo de 80 caracteres. 
+    @Size(max = 10, message = "Nombre muy largo") //validacion con un maximo de 80 caracteres. 
     private String nombre; 
 
     @Email(message = "formato de correo invalido")

@@ -1,0 +1,8 @@
+de debe de colocar esto en H2 para  visuailizar el contenido. 
+
+esta en la direccion de la bs: 
+http://localhost:8080/h2-console
+
+
+y este va en el parametro: JDBC URL
+jdbc:h2:mem:testdb
