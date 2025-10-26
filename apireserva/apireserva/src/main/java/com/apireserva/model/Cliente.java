@@ -14,6 +14,7 @@ import lombok.Data; //se usa para generar get,set y otros metodos.
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+//@Table(name = "Clientes"), esto nos ayudara a indicar a que referencia hace la tabla en la bs 
 public class Cliente {
 
     @Id

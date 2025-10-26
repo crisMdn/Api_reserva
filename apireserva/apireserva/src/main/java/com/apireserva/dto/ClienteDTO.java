@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor //constructor con todos los parametros. 
 @Builder //implementa patron builden que permite construir objetos de forma mas legible
 public class ClienteDTO {
+    //anotaciones de validacion. 
     @NotBlank(message = "el nombre es obligatorio") //validacion para nombre
     @Size(max = 10, message = "Nombre muy largo") //validacion con un maximo de 80 caracteres. 
     private String nombre; 
