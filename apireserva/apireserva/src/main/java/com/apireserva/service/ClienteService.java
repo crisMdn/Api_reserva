@@ -33,6 +33,7 @@ public class ClienteService {
     } 
 
 //esto fue un flujo, un pipeline =tuberia de procesos
+//.collect es una operacion terminal, lo anterior son operaciones intermedias, collect activa y finaliza el pipeline.
 
 
     //Este método guarda un cliente pero usando DTO
