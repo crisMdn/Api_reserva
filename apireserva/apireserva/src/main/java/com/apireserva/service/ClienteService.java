@@ -30,7 +30,9 @@ public class ClienteService {
                 .stream()
                 .map(cliente -> modelMapper.map(cliente, ClienteDTO.class))
                 .collect(Collectors.toList()); 
-    }
+    } 
+
+//esto fue un flujo, un pipeline =tuberia de procesos
 
 
     //Este método guarda un cliente pero usando DTO
