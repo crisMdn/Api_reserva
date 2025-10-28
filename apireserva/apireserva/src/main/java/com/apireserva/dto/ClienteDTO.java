@@ -12,7 +12,7 @@ public class ClienteDTO {
     //anotaciones de validacion. 
     @NotBlank(message = "el nombre es obligatorio") //validacion para nombre
     @Size(max = 10, message = "Nombre muy largo") //validacion con un maximo de 80 caracteres. 
-    private String nombre; 
+    private String nombre_cliente; //en la base de datos el atributo se llama nombre_cliente
 
     @Email(message = "formato de correo invalido")
     @NotBlank(message = "El correo es obligatorio")

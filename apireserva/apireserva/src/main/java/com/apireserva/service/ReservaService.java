@@ -9,6 +9,7 @@ import com.apireserva.model.Reserva;
 import com.apireserva.dto.ReservaDTO;
 import com.apireserva.repository.Reservarepository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 
@@ -20,6 +21,15 @@ public class ReservaService {
     private final Reservarepository repository; // Inyección del atributo repository, para que hable con la base de datos. 
 
     private final ModelMapper modelMapper;  //inyeccion de dependencia Model. 
+
+    @PostConstruct
+public void configurarMapper() {
+    modelMapper.typeMap(Reserva.class, ReservaDTO.class)
+        .addMapping(reserva -> reserva.getCliente().getId(), ReservaDTO::setId_cliente);
+
+    modelMapper.typeMap(ReservaDTO.class, Reserva.class)
+        .addMappings(mapper -> mapper.skip(Reserva::setCliente));
+}
 
     //modificacion del metodo referente a los DTO
     //anulado constructor, se agrego @RequeridArgsConstructor
@@ -34,6 +44,14 @@ public class ReservaService {
                 .map(reserva -> modelMapper.map(reserva, ReservaDTO.class))
                 .collect(Collectors.toList()); 
     }
+
+    //obtener una reserva por su numero de ID.
+    public ReservaDTO obtenerPorId(Long id) {
+    return repository.findById(id)
+        .map(reserva -> modelMapper.map(reserva, ReservaDTO.class))
+        .orElse(null);
+}
+
 
     //modificacion para uso de DTO
     public ReservaDTO guardar(ReservaDTO reservaDTO) {
