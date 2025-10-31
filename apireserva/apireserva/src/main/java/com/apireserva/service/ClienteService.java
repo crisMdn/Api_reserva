@@ -32,6 +32,14 @@ public class ClienteService {
                 .collect(Collectors.toList()); 
     } 
 
+    //se agrego metodo para buscar a un cliente por su id
+    public ClienteDTO obtenerPorId(Long id) {
+    return repository.findById(id)
+            .map(cliente -> modelMapper.map(cliente, ClienteDTO.class))
+            .orElse(null);
+}
+
+
 //esto fue un flujo, un pipeline =tuberia de procesos
 //.collect es una operacion terminal, lo anterior son operaciones intermedias, collect activa y finaliza el pipeline.
 

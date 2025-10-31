@@ -3,6 +3,8 @@ package com.apireserva.controller; //es el paquete propio
 import org.springframework.web.bind.annotation.*; //da acceso a las anotaciones de spring
 import java.util.List; //listas en java
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import lombok.RequiredArgsConstructor;
 
 import com.apireserva.service.ReservaService;
@@ -23,6 +25,17 @@ public class ReservaControlador {
     public List<ReservaDTO> listar() { //me va a retornar la dependencia inyectada en service
         return service.listar();
     }
+
+    @GetMapping("/{id}")
+public ResponseEntity<ReservaDTO> obtenerPorId(@PathVariable Long id) {
+    ReservaDTO reservaDTO = service.obtenerPorId(id);
+    if (reservaDTO != null) {
+        return ResponseEntity.ok(reservaDTO);
+    } else {
+        return ResponseEntity.notFound().build();
+    }
+}
+
 
     @PostMapping //metodo que usara las solicitudes tipo POST, para nuevas reservas
     public ReservaDTO guardar(@RequestBody ReservaDTO reservaDTO) { //body toma el cuerpo de la solitud http y lo convierte en un objeto Java a partir de los datos JSON enviados

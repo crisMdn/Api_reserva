@@ -19,6 +19,7 @@ public class Cliente {
 
     @Id //anotaciones de mapeo JPA. INdica como se relaciona con la base de datos. 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cliente") //se agrego para poder buscar a un cliente con su id
     private Long id;
 
     //NOTA: LAS VALIDACIONES FUERON PASADAS A LOS DTO. 
@@ -26,7 +27,7 @@ public class Cliente {
     //INTEGRACION DE VALIDACIONES
     //@NotBlank(message = "El nombre no puede estar vacío")
     //@Size(max = 100, message = "El nombre no puede tener más de 100 caracteres")
-    private String nombre;
+    private String nombre_cliente;
 
     //@NotBlank(message = "El correo no puede estar vacío")
     //@Email(message = "El correo debe tener un formato válido")
