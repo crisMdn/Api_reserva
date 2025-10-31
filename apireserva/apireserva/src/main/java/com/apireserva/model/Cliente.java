@@ -17,7 +17,7 @@ import lombok.Data; //se usa para generar get,set y otros metodos.
 //@Table(name = "Clientes"), esto nos ayudara a indicar a que referencia hace la tabla en la bs 
 public class Cliente {
 
-    @Id
+    @Id //anotaciones de mapeo JPA. INdica como se relaciona con la base de datos. 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
