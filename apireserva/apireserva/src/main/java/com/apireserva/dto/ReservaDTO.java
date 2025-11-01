@@ -24,4 +24,14 @@ public class ReservaDTO {
 
     @NotNull(message = "Debe indicar el ID del cliente") //validador de obligacion en campo. 
     private Long id_cliente; // relación con Cliente
+
+    @NotNull(message= "agregar una mesa")
+    private Long id_mesa;
+
+    @NotBlank(message = "Debe indicar el turno de la reserva")
+    private String turno;
+
+    private String estado_reserva;
+
+
 }
