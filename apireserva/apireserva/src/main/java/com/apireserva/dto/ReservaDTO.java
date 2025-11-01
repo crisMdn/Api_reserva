@@ -1,6 +1,7 @@
 // src/main/java/com/apireserva/dto/ReservaDTO.java
 package com.apireserva.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -32,6 +33,7 @@ public class ReservaDTO {
     private String turno;
 
     private String estado_reserva;
+
 
 
 }

@@ -40,7 +40,7 @@ public class Reserva {
     private Mesa mesa;
 
      @Column(nullable = false)
-    private String estado_reserva = "Activa";
+    private String estado_reserva = "Confirmado";
 
 
 }
