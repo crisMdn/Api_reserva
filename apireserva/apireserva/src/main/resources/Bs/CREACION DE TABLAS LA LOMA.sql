@@ -5,7 +5,7 @@ capacidad integer not null,
 ubicacion varchar(80),
 -- Se cambio estado por estado_mesa
 estado_mesa varchar(20) not null,
-created_at timestamp,
+created_at timestamp(0),
 
 check (estado_mesa in ('Disponible', 'Ocupada', 'Fuera de Servicio'))
 );
@@ -15,7 +15,7 @@ id_empleado bigserial primary key,
 -- Se cambio nombre por nombre_empleado
 nombre_empleado varchar(120) not null,
 puesto varchar(80),
-created_at timestamp
+created_at timestamp(0)
 
 check (puesto in ('Mesero', 'Cocinero', 'Recepcionista', 'Cajero', 'Gerente'))
 );
@@ -26,7 +26,7 @@ id_cliente bigserial primary key,
 nombre_cliente varchar(120) not null,
 correo varchar(160),
 telefono varchar(30),
-created_at timestamp
+created_at timestamp(0)
 );
 
 create table producto (
@@ -37,7 +37,7 @@ descripcion text,
 precio decimal(10, 2) not null,
 categoria varchar(80),
 activo boolean not null,
-created_at timestamp
+created_at timestamp(0)
 );
 
 create table reserva (
@@ -45,18 +45,19 @@ id_reserva bigserial primary key,
 id_cliente bigint not null,
 id_mesa bigint not null,
 -- Se cambio fecha por fecha_reservada
-fecha_reservada date not null,
+fecha_reservada timestamp(0) not null,
 turno varchar(12) not null,
 -- En personas se hizo el cambio a not null
 personas integer not null,
 -- Se cambio estado por estado_reserva
 estado_reserva varchar(20) not null,
-created_at timestamp,
+created_at timestamp(0),
 
 foreign key (id_cliente) references cliente(id_cliente),
 foreign key (id_mesa) references mesa(id_mesa),
 
-check (estado_reserva in ('Confirmada', 'Pendiente', 'Cancelada', 'Completada'))
+check (estado_reserva in ('Confirmada', 'Pendiente', 'Cancelada', 'Completada')),
+check (turno in ('Mañana', 'Tarde', 'Noche'))
 );
 
 create table pedido (
@@ -68,7 +69,7 @@ id_mesa bigint not null,
 fecha_hora timestamp not null,
 -- Se cambio estado por estado_pedido
 estado_pedido varchar(20) not null,
-created_at timestamp,
+created_at timestamp(0),
 
 foreign key (id_cliente) references cliente(id_cliente),
 foreign key (id_empleado) references empleado(id_empleado),
@@ -102,7 +103,7 @@ impuestos decimal(10,2) not null,
 total decimal(10,2) not null,
 -- Se agrego el estado_factura
 estado_factura varchar(20) not null default 'Pendiente de Pago',
-created_at timestamp,
+created_at timestamp(0),
 
 foreign key (id_pedido) references pedido(id_pedido),
 
@@ -132,3 +133,4 @@ observaciones text,
 
 foreign key (id_empleado) references empleado(id_empleado)
 );
+

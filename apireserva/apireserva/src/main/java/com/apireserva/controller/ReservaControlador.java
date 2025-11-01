@@ -36,7 +36,6 @@ public ResponseEntity<ReservaDTO> obtenerPorId(@PathVariable Long id) {
     }
 }
 
-
     @PostMapping //metodo que usara las solicitudes tipo POST, para nuevas reservas
     public ReservaDTO guardar(@RequestBody ReservaDTO reservaDTO) { //body toma el cuerpo de la solitud http y lo convierte en un objeto Java a partir de los datos JSON enviados
         return service.guardar(reservaDTO); 

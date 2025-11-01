@@ -1,8 +1,13 @@
 package com.apireserva.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Data //genera automaticamente todos los getters y setters , constructor vacio si no existe, metodos utiles, toString, equals, hashCode. 
 @NoArgsConstructor //creacion automatica de un constructor sin parametros. 
@@ -18,6 +23,15 @@ public class ClienteDTO {
     @NotBlank(message = "El correo es obligatorio")
     private String correo;
     
-    @Pattern(regexp ="^[0-9\\-\\+\\s]{8, 20}$", message= "Telefono invalido")
-    private String telefono; 
+    @Pattern(regexp ="^[0-9\\-\\+\\s]{8,20}$", message= "Telefono invalido")
+    private String telefono;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime created_at;
+
+    @PrePersist
+    protected void onCreate() {
+        this.created_at = LocalDateTime.now();
+    }
 }

@@ -1,0 +1,1212 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict fy8FLwZeI68qhaM8L3V0OzV7bTfmecjb3odfhTB3r4QdhqPUalmfNGyI8zM0K3k
+
+-- Dumped from database version 17.6
+-- Dumped by pg_dump version 17.6
+
+-- Started on 2025-11-01 17:35:40
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 236 (class 1259 OID 33704)
+-- Name: cierra_caja; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cierra_caja (
+    id_cierra bigint NOT NULL,
+    id_empleado bigint NOT NULL,
+    fecha_cierre timestamp without time zone NOT NULL,
+    total_ventas numeric(10,2) NOT NULL,
+    observaciones text
+);
+
+
+ALTER TABLE public.cierra_caja OWNER TO postgres;
+
+--
+-- TOC entry 235 (class 1259 OID 33703)
+-- Name: cierra_caja_id_cierra_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.cierra_caja_id_cierra_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.cierra_caja_id_cierra_seq OWNER TO postgres;
+
+--
+-- TOC entry 4962 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: cierra_caja_id_cierra_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.cierra_caja_id_cierra_seq OWNED BY public.cierra_caja.id_cierra;
+
+
+--
+-- TOC entry 222 (class 1259 OID 33598)
+-- Name: cliente; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cliente (
+    id_cliente bigint NOT NULL,
+    nombre_cliente character varying(120) NOT NULL,
+    correo character varying(160),
+    telefono character varying(30),
+    created_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.cliente OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 33597)
+-- Name: cliente_id_cliente_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.cliente_id_cliente_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.cliente_id_cliente_seq OWNER TO postgres;
+
+--
+-- TOC entry 4963 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: cliente_id_cliente_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.cliente_id_cliente_seq OWNED BY public.cliente.id_cliente;
+
+
+--
+-- TOC entry 230 (class 1259 OID 33656)
+-- Name: consumo; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.consumo (
+    id_detalle bigint NOT NULL,
+    id_pedido bigint NOT NULL,
+    id_producto bigint NOT NULL,
+    cantidad integer NOT NULL,
+    precio_unitario numeric(10,2) NOT NULL
+);
+
+
+ALTER TABLE public.consumo OWNER TO postgres;
+
+--
+-- TOC entry 229 (class 1259 OID 33655)
+-- Name: consumo_id_detalle_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.consumo_id_detalle_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.consumo_id_detalle_seq OWNER TO postgres;
+
+--
+-- TOC entry 4964 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: consumo_id_detalle_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.consumo_id_detalle_seq OWNED BY public.consumo.id_detalle;
+
+
+--
+-- TOC entry 220 (class 1259 OID 33590)
+-- Name: empleado; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.empleado (
+    id_empleado bigint NOT NULL,
+    nombre_empleado character varying(120) NOT NULL,
+    puesto character varying(80),
+    created_at timestamp(0) without time zone,
+    CONSTRAINT empleado_puesto_check CHECK (((puesto)::text = ANY ((ARRAY['Mesero'::character varying, 'Cocinero'::character varying, 'Recepcionista'::character varying, 'Cajero'::character varying, 'Gerente'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.empleado OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 33589)
+-- Name: empleado_id_empleado_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.empleado_id_empleado_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.empleado_id_empleado_seq OWNER TO postgres;
+
+--
+-- TOC entry 4965 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: empleado_id_empleado_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.empleado_id_empleado_seq OWNED BY public.empleado.id_empleado;
+
+
+--
+-- TOC entry 232 (class 1259 OID 33675)
+-- Name: factura; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.factura (
+    id_factura bigint NOT NULL,
+    id_pedido bigint NOT NULL,
+    subtotal numeric(10,2) NOT NULL,
+    descuento numeric(10,2),
+    propina numeric(10,2) NOT NULL,
+    impuestos numeric(10,2) NOT NULL,
+    total numeric(10,2) NOT NULL,
+    estado_factura character varying(20) DEFAULT 'Pendiente de Pago'::character varying NOT NULL,
+    created_at timestamp(0) without time zone,
+    CONSTRAINT factura_estado_factura_check CHECK (((estado_factura)::text = ANY ((ARRAY['Pendiente de Pago'::character varying, 'Pagada'::character varying, 'Anulada'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.factura OWNER TO postgres;
+
+--
+-- TOC entry 231 (class 1259 OID 33674)
+-- Name: factura_id_factura_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.factura_id_factura_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.factura_id_factura_seq OWNER TO postgres;
+
+--
+-- TOC entry 4966 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: factura_id_factura_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.factura_id_factura_seq OWNED BY public.factura.id_factura;
+
+
+--
+-- TOC entry 218 (class 1259 OID 33582)
+-- Name: mesa; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.mesa (
+    id_mesa bigint NOT NULL,
+    num_mesa integer NOT NULL,
+    capacidad integer NOT NULL,
+    ubicacion character varying(80),
+    estado_mesa character varying(20) NOT NULL,
+    created_at timestamp(0) without time zone,
+    CONSTRAINT mesa_estado_mesa_check CHECK (((estado_mesa)::text = ANY ((ARRAY['Disponible'::character varying, 'Ocupada'::character varying, 'Fuera de Servicio'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.mesa OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 33581)
+-- Name: mesa_id_mesa_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.mesa_id_mesa_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.mesa_id_mesa_seq OWNER TO postgres;
+
+--
+-- TOC entry 4967 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: mesa_id_mesa_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.mesa_id_mesa_seq OWNED BY public.mesa.id_mesa;
+
+
+--
+-- TOC entry 234 (class 1259 OID 33691)
+-- Name: pago; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pago (
+    id_pago bigint NOT NULL,
+    id_factura bigint NOT NULL,
+    monto numeric(10,2) NOT NULL,
+    metodo_pago character varying(30) NOT NULL,
+    fecha_pago timestamp without time zone NOT NULL,
+    refecencia character varying(120),
+    CONSTRAINT pago_metodo_pago_check CHECK (((metodo_pago)::text = ANY ((ARRAY['Efectivo'::character varying, 'Tarjeta'::character varying, 'Bitcoin'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.pago OWNER TO postgres;
+
+--
+-- TOC entry 233 (class 1259 OID 33690)
+-- Name: pago_id_pago_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.pago_id_pago_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.pago_id_pago_seq OWNER TO postgres;
+
+--
+-- TOC entry 4968 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: pago_id_pago_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.pago_id_pago_seq OWNED BY public.pago.id_pago;
+
+
+--
+-- TOC entry 228 (class 1259 OID 33633)
+-- Name: pedido; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pedido (
+    id_pedido bigint NOT NULL,
+    id_cliente bigint NOT NULL,
+    id_empleado bigint NOT NULL,
+    id_mesa bigint NOT NULL,
+    fecha_hora timestamp without time zone NOT NULL,
+    estado_pedido character varying(20) NOT NULL,
+    created_at timestamp(0) without time zone,
+    CONSTRAINT pedido_estado_pedido_check CHECK (((estado_pedido)::text = ANY ((ARRAY['Pendiente'::character varying, 'En Proceso'::character varying, 'Listo para Servir'::character varying, 'Servido'::character varying, 'Cancelado'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.pedido OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 33632)
+-- Name: pedido_id_pedido_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.pedido_id_pedido_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.pedido_id_pedido_seq OWNER TO postgres;
+
+--
+-- TOC entry 4969 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: pedido_id_pedido_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.pedido_id_pedido_seq OWNED BY public.pedido.id_pedido;
+
+
+--
+-- TOC entry 224 (class 1259 OID 33605)
+-- Name: producto; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.producto (
+    id_producto bigint NOT NULL,
+    nombre_producto character varying(120) NOT NULL,
+    descripcion text,
+    precio numeric(10,2) NOT NULL,
+    categoria character varying(80),
+    activo boolean NOT NULL,
+    created_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.producto OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 33604)
+-- Name: producto_id_producto_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.producto_id_producto_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.producto_id_producto_seq OWNER TO postgres;
+
+--
+-- TOC entry 4970 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: producto_id_producto_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.producto_id_producto_seq OWNED BY public.producto.id_producto;
+
+
+--
+-- TOC entry 226 (class 1259 OID 33614)
+-- Name: reserva; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.reserva (
+    id_reserva bigint NOT NULL,
+    id_cliente bigint NOT NULL,
+    id_mesa bigint NOT NULL,
+    fecha_reservada timestamp(0) without time zone NOT NULL,
+    turno character varying(12) NOT NULL,
+    personas integer NOT NULL,
+    estado_reserva character varying(20) NOT NULL,
+    created_at timestamp(0) without time zone,
+    CONSTRAINT reserva_estado_reserva_check CHECK (((estado_reserva)::text = ANY ((ARRAY['Confirmada'::character varying, 'Pendiente'::character varying, 'Cancelada'::character varying, 'Completada'::character varying])::text[]))),
+    CONSTRAINT reserva_turno_check CHECK (((turno)::text = ANY ((ARRAY['Mañana'::character varying, 'Tarde'::character varying, 'Noche'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.reserva OWNER TO postgres;
+
+--
+-- TOC entry 225 (class 1259 OID 33613)
+-- Name: reserva_id_reserva_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.reserva_id_reserva_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.reserva_id_reserva_seq OWNER TO postgres;
+
+--
+-- TOC entry 4971 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: reserva_id_reserva_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.reserva_id_reserva_seq OWNED BY public.reserva.id_reserva;
+
+
+--
+-- TOC entry 4750 (class 2604 OID 33707)
+-- Name: cierra_caja id_cierra; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cierra_caja ALTER COLUMN id_cierra SET DEFAULT nextval('public.cierra_caja_id_cierra_seq'::regclass);
+
+
+--
+-- TOC entry 4742 (class 2604 OID 33601)
+-- Name: cliente id_cliente; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cliente ALTER COLUMN id_cliente SET DEFAULT nextval('public.cliente_id_cliente_seq'::regclass);
+
+
+--
+-- TOC entry 4746 (class 2604 OID 33659)
+-- Name: consumo id_detalle; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.consumo ALTER COLUMN id_detalle SET DEFAULT nextval('public.consumo_id_detalle_seq'::regclass);
+
+
+--
+-- TOC entry 4741 (class 2604 OID 33593)
+-- Name: empleado id_empleado; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.empleado ALTER COLUMN id_empleado SET DEFAULT nextval('public.empleado_id_empleado_seq'::regclass);
+
+
+--
+-- TOC entry 4747 (class 2604 OID 33678)
+-- Name: factura id_factura; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.factura ALTER COLUMN id_factura SET DEFAULT nextval('public.factura_id_factura_seq'::regclass);
+
+
+--
+-- TOC entry 4740 (class 2604 OID 33585)
+-- Name: mesa id_mesa; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.mesa ALTER COLUMN id_mesa SET DEFAULT nextval('public.mesa_id_mesa_seq'::regclass);
+
+
+--
+-- TOC entry 4749 (class 2604 OID 33694)
+-- Name: pago id_pago; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pago ALTER COLUMN id_pago SET DEFAULT nextval('public.pago_id_pago_seq'::regclass);
+
+
+--
+-- TOC entry 4745 (class 2604 OID 33636)
+-- Name: pedido id_pedido; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pedido ALTER COLUMN id_pedido SET DEFAULT nextval('public.pedido_id_pedido_seq'::regclass);
+
+
+--
+-- TOC entry 4743 (class 2604 OID 33608)
+-- Name: producto id_producto; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.producto ALTER COLUMN id_producto SET DEFAULT nextval('public.producto_id_producto_seq'::regclass);
+
+
+--
+-- TOC entry 4744 (class 2604 OID 33617)
+-- Name: reserva id_reserva; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reserva ALTER COLUMN id_reserva SET DEFAULT nextval('public.reserva_id_reserva_seq'::regclass);
+
+
+--
+-- TOC entry 4956 (class 0 OID 33704)
+-- Dependencies: 236
+-- Data for Name: cierra_caja; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cierra_caja (id_cierra, id_empleado, fecha_cierre, total_ventas, observaciones) FROM stdin;
+1	15	2025-10-01 22:00:00	1050.75	Cierre sin incidencias
+2	16	2025-10-02 22:00:00	980.50	Cierre con retraso en pagos
+3	17	2025-10-03 22:00:00	1125.00	Cierre normal
+4	15	2025-10-04 22:00:00	875.25	Cierre parcial por mantenimiento
+5	16	2025-10-05 22:00:00	1340.60	Cierre con alta demanda
+6	17	2025-10-06 22:00:00	990.00	Cierre sin novedades
+7	15	2025-10-07 22:00:00	1025.30	Cierre con ajuste de caja
+8	16	2025-10-08 22:00:00	1100.00	Cierre completo
+9	17	2025-10-09 22:00:00	950.45	Cierre con devolución registrada
+10	15	2025-10-10 22:00:00	1205.80	Cierre exitoso
+11	16	2025-11-01 22:00:00	1080.00	Cierre sin incidencias
+12	17	2025-11-02 22:00:00	995.75	Cierre con retraso en pagos
+13	15	2025-11-03 22:00:00	1135.20	Cierre normal
+14	16	2025-11-04 22:00:00	890.60	Cierre parcial por mantenimiento
+15	17	2025-11-05 22:00:00	1390.00	Cierre con alta demanda
+16	15	2025-11-06 22:00:00	1010.40	Cierre sin novedades
+17	16	2025-11-07 22:00:00	1045.00	Cierre con ajuste de caja
+18	17	2025-11-08 22:00:00	1115.90	Cierre completo
+19	15	2025-11-09 22:00:00	960.25	Cierre con devolución registrada
+20	16	2025-11-10 22:00:00	1220.00	Cierre exitoso
+21	17	2025-12-01 22:00:00	1095.50	Cierre sin incidencias
+22	15	2025-12-02 22:00:00	1005.00	Cierre con retraso en pagos
+23	16	2025-12-03 22:00:00	1140.75	Cierre normal
+24	17	2025-12-04 22:00:00	905.30	Cierre parcial por mantenimiento
+25	15	2025-12-05 22:00:00	1405.90	Cierre con alta demanda
+26	16	2025-12-06 22:00:00	1020.00	Cierre sin novedades
+27	17	2025-12-07 22:00:00	1060.60	Cierre con ajuste de caja
+28	15	2025-12-08 22:00:00	1125.00	Cierre completo
+29	16	2025-12-09 22:00:00	970.80	Cierre con devolución registrada
+30	17	2025-12-10 22:00:00	1235.25	Cierre exitoso
+\.
+
+
+--
+-- TOC entry 4942 (class 0 OID 33598)
+-- Dependencies: 222
+-- Data for Name: cliente; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cliente (id_cliente, nombre_cliente, correo, telefono, created_at) FROM stdin;
+1	María López	maria.lopez@gmail.com	7555-1234	2025-10-01 10:00:00
+2	José Pérez	jose.perez@hotmail.com	6555-5678	2025-10-02 10:05:00
+3	Lucía Ramírez	lucia.ramirez@yahoo.com	7555-9012	2025-10-03 10:10:00
+4	Andrés Gómez	andres.gomez@outlook.com	2555-3456	2025-10-04 10:15:00
+5	Valentina Díaz	valentina.diaz@gmail.com	2555-7890	2025-10-05 10:20:00
+6	Miguel Torres	miguel.torres@gmail.com	7555-1111	2025-10-06 10:25:00
+7	Camila Herrera	camila.herrera@hotmail.com	6555-2222	2025-10-07 10:30:00
+8	Sebastián Ríos	sebastian.rios@yahoo.com	7555-3333	2025-10-08 10:35:00
+9	Daniela Vega	daniela.vega@outlook.com	6555-4444	2025-10-09 10:40:00
+10	Javier León	javier.leon@gmail.com	7555-5555	2025-10-10 10:45:00
+11	Isabel Mora	isabel.mora@gmail.com	6555-6666	2025-11-01 10:00:00
+12	Raúl Díaz	raul.diaz@hotmail.com	7555-7777	2025-11-02 10:05:00
+13	Claudia Peña	claudia.pena@yahoo.com	7555-8888	2025-11-03 10:10:00
+14	Esteban Gil	esteban.gil@outlook.com	6555-9999	2025-11-04 10:15:00
+15	Natalia Cruz	natalia.cruz@gmail.com	6555-0000	2025-11-05 10:20:00
+16	Fernando Soto	fernando.soto@gmail.com	2555-1212	2025-11-06 10:25:00
+17	Patricia Lara	patricia.lara@hotmail.com	2555-2323	2025-11-07 10:30:00
+18	Iván Paredes	ivan.paredes@yahoo.com	3555-3434	2025-11-08 10:35:00
+19	Rocío Méndez	rocio.mendez@outlook.com	7555-4545	2025-11-09 10:40:00
+20	Tomás Bravo	tomas.bravo@gmail.com	6555-5656	2025-11-10 10:45:00
+21	Gabriela Ortiz	gabriela.ortiz@gmail.com	7555-6767	2025-12-01 10:00:00
+22	Héctor Molina	hector.molina@hotmail.com	2555-7878	2025-12-02 10:05:00
+23	Verónica Silva	veronica.silva@yahoo.com	6555-8989	2025-12-03 10:10:00
+24	Diego Navarro	diego.navarro@outlook.com	2555-9090	2025-12-04 10:15:00
+25	Mariela Fuentes	mariela.fuentes@gmail.com	6555-1010	2025-12-05 10:20:00
+26	Andrés Pino	andres.pino@gmail.com	2555-2020	2025-12-06 10:25:00
+27	Cecilia Rojas	cecilia.rojas@hotmail.com	2555-3030	2025-12-07 10:30:00
+28	Gustavo Torres	gustavo.torres@yahoo.com	2555-4040	2025-12-08 10:35:00
+29	Liliana Vargas	liliana.vargas@outlook.com	6555-5050	2025-12-09 10:40:00
+30	Samuel Reyes	samuel.reyes@gmail.com	7555-6060	2025-12-10 10:45:00
+\.
+
+
+--
+-- TOC entry 4950 (class 0 OID 33656)
+-- Dependencies: 230
+-- Data for Name: consumo; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.consumo (id_detalle, id_pedido, id_producto, cantidad, precio_unitario) FROM stdin;
+1	1	1	2	8.50
+2	2	2	1	9.75
+3	3	3	3	2.50
+4	4	4	1	7.25
+5	5	5	2	1.75
+6	6	6	2	6.50
+7	7	7	1	3.00
+8	8	8	2	5.25
+9	9	9	1	2.00
+10	10	10	2	4.50
+11	11	11	1	9.00
+12	12	12	2	2.25
+13	13	13	1	3.75
+14	14	14	2	2.50
+15	15	15	1	6.00
+16	16	16	2	4.25
+17	17	17	1	3.00
+18	18	18	2	2.75
+19	19	19	1	10.00
+20	20	20	2	1.90
+21	21	21	1	7.80
+22	22	22	2	3.50
+23	23	23	1	2.80
+24	24	24	2	4.90
+25	25	25	1	5.00
+26	26	26	2	2.60
+27	27	27	1	4.20
+28	28	28	2	2.30
+29	29	29	1	5.50
+30	30	30	2	2.50
+\.
+
+
+--
+-- TOC entry 4940 (class 0 OID 33590)
+-- Dependencies: 220
+-- Data for Name: empleado; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.empleado (id_empleado, nombre_empleado, puesto, created_at) FROM stdin;
+1	Sofía Herrera	Gerente	2025-10-05 12:00:00
+2	Carlos Ruiz	Cocinero	2025-10-02 09:00:00
+3	Jorge Salas	Cocinero	2025-10-07 09:00:00
+4	Claudia Peña	Cocinero	2025-11-02 09:00:00
+5	Iván Paredes	Cocinero	2025-11-07 09:00:00
+6	Verónica Silva	Cocinero	2025-12-02 09:00:00
+7	Laura Gómez	Mesero	2025-10-01 08:00:00
+8	Daniela Ríos	Mesero	2025-10-06 08:00:00
+9	Patricia Lara	Mesero	2025-11-06 08:00:00
+10	Héctor Molina	Mesero	2025-12-01 08:00:00
+11	Cecilia Rojas	Mesero	2025-12-06 08:00:00
+12	Raúl Díaz	Mesero	2025-11-01 08:00:00
+13	Gustavo Torres	Mesero	2025-12-07 09:00:00
+14	Iván Paredes	Mesero	2025-11-07 09:00:00
+15	Luis Martínez	Cajero	2025-10-04 11:00:00
+16	Pedro León	Cajero	2025-10-09 11:00:00
+17	Natalia Cruz	Cajero	2025-11-04 11:00:00
+18	Ana Torres	Recepcionista	2025-10-03 10:00:00
+19	Mónica Vega	Recepcionista	2025-10-08 10:00:00
+20	Esteban Gil	Recepcionista	2025-11-03 10:00:00
+\.
+
+
+--
+-- TOC entry 4952 (class 0 OID 33675)
+-- Dependencies: 232
+-- Data for Name: factura; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.factura (id_factura, id_pedido, subtotal, descuento, propina, impuestos, total, estado_factura, created_at) FROM stdin;
+1	1	17.00	0.00	2.00	1.50	20.50	Pagada	2025-10-01 00:00:00
+2	2	9.75	1.00	1.50	0.75	11.00	Pendiente de Pago	2025-10-02 00:00:00
+3	3	7.50	0.00	1.00	0.50	9.00	Anulada	2025-10-03 00:00:00
+4	4	7.25	0.50	1.00	0.75	8.50	Pagada	2025-10-04 00:00:00
+5	5	3.50	\N	0.50	0.25	4.25	Pendiente de Pago	2025-10-05 00:00:00
+6	6	6.50	0.00	1.00	0.50	8.00	Pagada	2025-10-06 00:00:00
+7	7	3.00	\N	0.50	0.25	3.75	Pagada	2025-10-07 00:00:00
+8	8	5.25	0.25	0.75	0.50	6.25	Pendiente de Pago	2025-10-08 00:00:00
+9	9	2.00	\N	0.25	0.15	2.40	Pagada	2025-10-09 00:00:00
+10	10	4.50	0.50	0.75	0.40	5.15	Anulada	2025-10-10 00:00:00
+11	11	9.00	1.00	1.50	0.75	10.25	Pagada	2025-11-01 00:00:00
+12	12	2.25	\N	0.25	0.15	2.65	Pendiente de Pago	2025-11-02 00:00:00
+13	13	3.75	0.25	0.50	0.30	4.30	Pagada	2025-11-03 00:00:00
+14	14	2.50	\N	0.25	0.15	2.90	Pagada	2025-11-04 00:00:00
+15	15	6.00	0.50	1.00	0.60	7.10	Pendiente de Pago	2025-11-05 00:00:00
+16	16	4.25	\N	0.50	0.30	5.05	Pagada	2025-11-06 00:00:00
+17	17	3.00	0.25	0.50	0.20	3.45	Pagada	2025-11-07 00:00:00
+18	18	2.75	\N	0.25	0.15	3.15	Pendiente de Pago	2025-11-08 00:00:00
+19	19	10.00	1.00	1.50	0.75	11.25	Pagada	2025-11-09 00:00:00
+20	20	1.90	\N	0.25	0.10	2.25	Anulada	2025-11-10 00:00:00
+21	21	7.80	0.50	1.00	0.60	8.90	Pagada	2025-12-01 00:00:00
+22	22	3.50	\N	0.50	0.25	4.25	Pendiente de Pago	2025-12-02 00:00:00
+23	23	2.80	0.25	0.50	0.20	3.25	Pagada	2025-12-03 00:00:00
+24	24	4.90	\N	0.75	0.40	6.05	Pagada	2025-12-04 00:00:00
+25	25	5.00	0.50	0.75	0.35	5.60	Pendiente de Pago	2025-12-05 00:00:00
+26	26	2.60	\N	0.25	0.15	3.00	Pagada	2025-12-06 00:00:00
+27	27	4.20	0.25	0.50	0.30	4.75	Pagada	2025-12-07 00:00:00
+28	28	2.30	\N	0.25	0.15	2.70	Pendiente de Pago	2025-12-08 00:00:00
+29	29	5.50	0.50	0.75	0.40	6.15	Pagada	2025-12-09 00:00:00
+30	30	2.50	\N	0.25	0.15	2.90	Anulada	2025-12-10 00:00:00
+\.
+
+
+--
+-- TOC entry 4938 (class 0 OID 33582)
+-- Dependencies: 218
+-- Data for Name: mesa; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.mesa (id_mesa, num_mesa, capacidad, ubicacion, estado_mesa, created_at) FROM stdin;
+1	1	4	Interior	Disponible	2025-11-01 12:00:00
+2	2	6	Terraza	Ocupada	2025-10-24 12:05:00
+3	3	2	Interior	Disponible	2025-10-10 12:10:00
+4	4	4	Terraza	Fuera de Servicio	2025-10-28 12:15:00
+5	5	6	Interior	Disponible	2025-10-15 12:20:00
+6	6	4	Terraza	Ocupada	2025-11-01 12:25:00
+7	7	2	Interior	Disponible	2025-11-04 12:30:00
+8	8	4	Terraza	Disponible	2025-11-08 12:35:00
+9	9	6	Interior	Ocupada	2025-11-21 12:40:00
+10	10	2	Terraza	Disponible	2025-11-11 12:45:00
+11	11	4	Interior	Fuera de Servicio	2025-10-28 12:50:00
+12	12	6	Terraza	Disponible	2025-10-28 12:55:00
+13	13	2	Interior	Ocupada	2025-10-29 13:00:00
+14	14	4	Terraza	Disponible	2025-10-30 13:05:00
+15	15	6	Interior	Disponible	2025-11-02 13:10:00
+16	16	2	Terraza	Ocupada	2025-11-02 13:15:00
+17	17	4	Interior	Disponible	2025-11-08 13:20:00
+18	18	6	Terraza	Fuera de Servicio	2025-10-01 13:25:00
+19	19	2	Interior	Disponible	2025-10-01 13:30:00
+20	20	4	Terraza	Ocupada	2025-11-09 13:35:00
+21	21	6	Interior	Disponible	2025-11-15 13:40:00
+22	22	2	Terraza	Disponible	2025-11-16 13:45:00
+23	23	4	Interior	Ocupada	2025-11-15 13:50:00
+24	24	6	Terraza	Disponible	2025-11-21 13:55:00
+25	25	2	Interior	Fuera de Servicio	2025-11-15 14:00:00
+26	26	4	Terraza	Disponible	2025-11-11 14:05:00
+27	27	6	Interior	Ocupada	2025-10-29 14:10:00
+28	28	2	Terraza	Disponible	2025-10-30 14:15:00
+29	29	4	Interior	Disponible	2025-10-31 14:20:00
+30	30	6	Terraza	Ocupada	2025-10-31 14:25:00
+\.
+
+
+--
+-- TOC entry 4954 (class 0 OID 33691)
+-- Dependencies: 234
+-- Data for Name: pago; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pago (id_pago, id_factura, monto, metodo_pago, fecha_pago, refecencia) FROM stdin;
+1	1	20.50	Efectivo	2025-10-01 00:00:00	REF001
+2	2	11.00	Tarjeta	2025-10-02 00:00:00	REF002
+3	3	9.00	Bitcoin	2025-10-03 00:00:00	REF003
+4	4	8.50	Efectivo	2025-10-04 00:00:00	REF004
+5	5	4.25	Tarjeta	2025-10-05 00:00:00	REF005
+6	6	8.00	Bitcoin	2025-10-06 00:00:00	REF006
+7	7	3.75	Efectivo	2025-10-07 00:00:00	REF007
+8	8	6.25	Tarjeta	2025-10-08 00:00:00	REF008
+9	9	2.40	Bitcoin	2025-10-09 00:00:00	REF009
+10	10	5.15	Efectivo	2025-10-10 00:00:00	REF010
+11	11	10.25	Tarjeta	2025-11-01 00:00:00	REF011
+12	12	2.65	Bitcoin	2025-11-02 00:00:00	REF012
+13	13	4.30	Efectivo	2025-11-03 00:00:00	REF013
+14	14	2.90	Tarjeta	2025-11-04 00:00:00	REF014
+15	15	7.10	Bitcoin	2025-11-05 00:00:00	REF015
+16	16	5.05	Efectivo	2025-11-06 00:00:00	REF016
+17	17	3.45	Tarjeta	2025-11-07 00:00:00	REF017
+18	18	3.15	Bitcoin	2025-11-08 00:00:00	REF018
+19	19	11.25	Efectivo	2025-11-09 00:00:00	REF019
+20	20	2.25	Tarjeta	2025-11-10 00:00:00	REF020
+21	21	8.90	Bitcoin	2025-12-01 00:00:00	REF021
+22	22	4.25	Efectivo	2025-12-02 00:00:00	REF022
+23	23	3.25	Tarjeta	2025-12-03 00:00:00	REF023
+24	24	6.05	Bitcoin	2025-12-04 00:00:00	REF024
+25	25	5.60	Efectivo	2025-12-05 00:00:00	REF025
+26	26	3.00	Tarjeta	2025-12-06 00:00:00	REF026
+27	27	4.75	Bitcoin	2025-12-07 00:00:00	REF027
+28	28	2.70	Efectivo	2025-12-08 00:00:00	REF028
+29	29	6.15	Tarjeta	2025-12-09 00:00:00	REF029
+30	30	2.90	Bitcoin	2025-12-10 00:00:00	REF030
+\.
+
+
+--
+-- TOC entry 4948 (class 0 OID 33633)
+-- Dependencies: 228
+-- Data for Name: pedido; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pedido (id_pedido, id_cliente, id_empleado, id_mesa, fecha_hora, estado_pedido, created_at) FROM stdin;
+1	1	6	1	2025-10-01 13:00:00	Pendiente	2025-10-01 00:00:00
+2	2	6	2	2025-10-02 13:05:00	En Proceso	2025-10-02 00:00:00
+3	3	7	3	2025-10-03 13:10:00	Listo para Servir	2025-10-03 00:00:00
+4	4	7	4	2025-10-04 13:15:00	Servido	2025-10-04 00:00:00
+5	5	7	5	2025-10-05 13:20:00	Cancelado	2025-10-05 00:00:00
+6	6	8	6	2025-10-06 13:25:00	Pendiente	2025-10-06 00:00:00
+7	7	8	7	2025-10-07 13:30:00	En Proceso	2025-10-07 00:00:00
+8	8	9	8	2025-10-08 13:35:00	Listo para Servir	2025-10-08 00:00:00
+9	9	9	9	2025-10-09 13:40:00	Servido	2025-10-09 00:00:00
+10	10	9	10	2025-10-10 13:45:00	Cancelado	2025-10-10 00:00:00
+11	11	10	11	2025-11-01 13:00:00	Pendiente	2025-11-01 00:00:00
+12	12	12	12	2025-11-02 13:05:00	En Proceso	2025-11-02 00:00:00
+13	13	13	13	2025-11-03 13:10:00	Listo para Servir	2025-11-03 00:00:00
+14	14	14	14	2025-11-04 13:15:00	Servido	2025-11-04 00:00:00
+15	15	15	15	2025-11-05 13:20:00	Cancelado	2025-11-05 00:00:00
+16	16	16	16	2025-11-06 13:25:00	Pendiente	2025-11-06 00:00:00
+17	17	17	17	2025-11-07 13:30:00	En Proceso	2025-11-07 00:00:00
+18	18	18	18	2025-11-08 13:35:00	Listo para Servir	2025-11-08 00:00:00
+19	19	19	19	2025-11-09 13:40:00	Servido	2025-11-09 00:00:00
+20	20	20	20	2025-11-10 13:45:00	Cancelado	2025-11-10 00:00:00
+21	21	20	21	2025-12-01 13:00:00	Pendiente	2025-12-01 00:00:00
+22	22	19	22	2025-12-02 13:05:00	En Proceso	2025-12-02 00:00:00
+23	23	13	23	2025-12-03 13:10:00	Listo para Servir	2025-12-03 00:00:00
+24	24	14	24	2025-12-04 13:15:00	Servido	2025-12-04 00:00:00
+25	25	15	25	2025-12-05 13:20:00	Cancelado	2025-12-05 00:00:00
+26	26	16	26	2025-12-06 13:25:00	Pendiente	2025-12-06 00:00:00
+27	27	17	27	2025-12-07 13:30:00	En Proceso	2025-12-07 00:00:00
+28	28	18	28	2025-12-08 13:40:00	Listo para Servir	2025-12-08 00:00:00
+29	29	19	29	2025-12-07 13:30:00	En Proceso	2025-12-07 00:00:00
+30	30	20	30	2025-12-08 13:50:00	Listo para Servir	2025-12-08 00:00:00
+\.
+
+
+--
+-- TOC entry 4944 (class 0 OID 33605)
+-- Dependencies: 224
+-- Data for Name: producto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.producto (id_producto, nombre_producto, descripcion, precio, categoria, activo, created_at) FROM stdin;
+1	Hamburguesa Clásica	Carne, queso, lechuga y tomate	8.50	Comida	t	2025-10-01 00:00:00
+2	Pizza Margarita	Tomate, mozzarella y albahaca	9.75	Comida	t	2025-10-02 00:00:00
+3	Coca-Cola 500ml	Bebida gaseosa	2.50	Bebida	t	2025-10-03 00:00:00
+4	Ensalada César	Lechuga, pollo, crutones y aderezo	7.25	Comida	t	2025-10-04 00:00:00
+5	Agua Mineral	Botella 600ml sin gas	1.75	Bebida	t	2025-10-05 00:00:00
+6	Tacos al Pastor	Tortilla, cerdo marinado, piña	6.50	Comida	t	2025-10-06 00:00:00
+7	Jugo de Naranja	Natural, sin azúcar	3.00	Bebida	t	2025-10-07 00:00:00
+8	Sopa de Verduras	Caldo con vegetales frescos	5.25	Comida	t	2025-10-08 00:00:00
+9	Café Americano	Taza mediana	2.00	Bebida	t	2025-10-09 00:00:00
+10	Panqueques	Con miel y mantequilla	4.50	Comida	t	2025-10-10 00:00:00
+11	Lasaña	Carne, pasta, queso	9.00	Comida	t	2025-11-01 00:00:00
+12	Té Helado	Con limón	2.25	Bebida	t	2025-11-02 00:00:00
+13	Croissant	Relleno de chocolate	3.75	Comida	t	2025-11-03 00:00:00
+14	Refresco de Manzana	Botella 500ml	2.50	Bebida	t	2025-11-04 00:00:00
+15	Sándwich de Pollo	Con lechuga y mayonesa	6.00	Comida	t	2025-11-05 00:00:00
+16	Smoothie de Fresa	Con yogurt natural	4.25	Bebida	t	2025-11-06 00:00:00
+17	Empanada de Queso	Horneada	3.00	Comida	t	2025-11-07 00:00:00
+18	Limonada	Natural, con hielo	2.75	Bebida	t	2025-11-08 00:00:00
+19	Pizza Pepperoni	Con extra queso	10.00	Comida	t	2025-11-09 00:00:00
+20	Agua con Gas	Botella 500ml	1.90	Bebida	t	2025-11-10 00:00:00
+21	Chilaquiles Verdes	Con pollo y crema	7.80	Comida	t	2025-12-01 00:00:00
+22	Chocolate Caliente	Con leche	3.50	Bebida	t	2025-12-02 00:00:00
+23	Tamal de Elote	Dulce	2.80	Comida	t	2025-12-03 00:00:00
+24	Cerveza Pilsener	Botella 355ml	4.90	Bebida	t	2025-12-04 00:00:00
+25	Molletes	Pan con frijoles y queso	5.00	Comida	t	2025-12-05 00:00:00
+26	Refresco de Uva	Botella 600ml	2.60	Bebida	t	2025-12-06 00:00:00
+27	Hot Dog	Con mostaza y ketchup	4.20	Comida	t	2025-12-07 00:00:00
+28	Té Verde	Taza caliente	2.30	Bebida	t	2025-12-08 00:00:00
+29	Quesadilla	Con queso Oaxaca	5.50	Comida	t	2025-12-09 00:00:00
+30	Refresco de Cola	Botella 600ml	2.50	Bebida	t	2025-12-10 00:00:00
+\.
+
+
+--
+-- TOC entry 4946 (class 0 OID 33614)
+-- Dependencies: 226
+-- Data for Name: reserva; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.reserva (id_reserva, id_cliente, id_mesa, fecha_reservada, turno, personas, estado_reserva, created_at) FROM stdin;
+1	1	1	2025-10-01 12:00:00	Tarde	2	Confirmada	2025-09-28 10:03:00
+2	2	2	2025-10-02 19:30:00	Noche	4	Pendiente	2025-09-30 14:08:00
+3	3	3	2025-10-03 08:30:00	Mañana	3	Completada	2025-09-30 17:59:00
+4	4	4	2025-10-04 19:00:00	Noche	5	Cancelada	2025-10-02 18:00:00
+5	5	5	2025-10-05 11:45:00	Tarde	2	Confirmada	2025-10-03 09:15:00
+6	6	6	2025-10-06 07:15:00	Mañana	6	Pendiente	2025-10-04 08:30:00
+7	7	7	2025-10-07 12:10:00	Tarde	4	Completada	2025-10-05 11:00:00
+8	8	8	2025-10-08 18:50:00	Noche	2	Cancelada	2025-10-06 20:00:00
+9	9	9	2025-10-09 08:40:00	Mañana	3	Confirmada	2025-10-07 07:45:00
+10	10	10	2025-10-10 21:00:00	Noche	5	Pendiente	2025-10-08 19:30:00
+11	11	11	2025-11-01 13:30:00	Tarde	2	Completada	2025-10-29 10:00:00
+12	12	12	2025-11-02 08:00:00	Mañana	4	Cancelada	2025-10-30 09:00:00
+13	13	13	2025-11-03 14:05:00	Tarde	3	Confirmada	2025-11-01 11:45:00
+14	14	14	2025-11-04 20:30:00	Noche	5	Pendiente	2025-11-02 18:00:00
+15	15	15	2025-11-05 12:10:00	Tarde	2	Completada	2025-11-03 10:30:00
+16	16	16	2025-11-06 19:20:00	Noche	6	Cancelada	2025-11-04 17:00:00
+17	17	17	2025-11-07 07:45:00	Mañana	4	Confirmada	2025-11-05 08:00:00
+18	18	18	2025-11-08 21:00:00	Noche	2	Pendiente	2025-11-06 20:00:00
+19	19	19	2025-11-09 12:30:00	Tarde	3	Completada	2025-11-07 11:00:00
+20	20	20	2025-11-10 06:45:00	Mañana	5	Cancelada	2025-11-08 07:00:00
+21	21	21	2025-12-01 12:15:00	Tarde	2	Confirmada	2025-11-28 10:00:00
+22	22	22	2025-12-02 19:30:00	Noche	4	Pendiente	2025-11-30 18:00:00
+23	23	23	2025-12-03 08:00:00	Mañana	3	Completada	2025-12-01 07:30:00
+24	24	24	2025-12-04 19:50:00	Noche	5	Cancelada	2025-12-02 18:45:00
+25	25	25	2025-12-05 12:30:00	Tarde	2	Confirmada	2025-12-03 11:00:00
+26	26	26	2025-12-06 09:00:00	Mañana	6	Pendiente	2025-12-04 08:00:00
+27	27	27	2025-12-07 09:00:00	Mañana	4	Completada	2025-12-05 08:30:00
+28	28	28	2025-12-08 20:00:00	Noche	2	Cancelada	2025-12-06 19:00:00
+29	29	29	2025-12-09 20:00:00	Noche	3	Confirmada	2025-12-07 18:30:00
+30	30	30	2025-12-10 20:00:00	Noche	5	Pendiente	2025-12-08 19:00:00
+\.
+
+
+--
+-- TOC entry 4972 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: cierra_caja_id_cierra_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.cierra_caja_id_cierra_seq', 30, true);
+
+
+--
+-- TOC entry 4973 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: cliente_id_cliente_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.cliente_id_cliente_seq', 60, true);
+
+
+--
+-- TOC entry 4974 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: consumo_id_detalle_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.consumo_id_detalle_seq', 31, true);
+
+
+--
+-- TOC entry 4975 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: empleado_id_empleado_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.empleado_id_empleado_seq', 40, true);
+
+
+--
+-- TOC entry 4976 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: factura_id_factura_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.factura_id_factura_seq', 30, true);
+
+
+--
+-- TOC entry 4977 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: mesa_id_mesa_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.mesa_id_mesa_seq', 60, true);
+
+
+--
+-- TOC entry 4978 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: pago_id_pago_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.pago_id_pago_seq', 30, true);
+
+
+--
+-- TOC entry 4979 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: pedido_id_pedido_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.pedido_id_pedido_seq', 60, true);
+
+
+--
+-- TOC entry 4980 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: producto_id_producto_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.producto_id_producto_seq', 60, true);
+
+
+--
+-- TOC entry 4981 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: reserva_id_reserva_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.reserva_id_reserva_seq', 60, true);
+
+
+--
+-- TOC entry 4781 (class 2606 OID 33711)
+-- Name: cierra_caja cierra_caja_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cierra_caja
+    ADD CONSTRAINT cierra_caja_pkey PRIMARY KEY (id_cierra);
+
+
+--
+-- TOC entry 4763 (class 2606 OID 33603)
+-- Name: cliente cliente_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cliente
+    ADD CONSTRAINT cliente_pkey PRIMARY KEY (id_cliente);
+
+
+--
+-- TOC entry 4771 (class 2606 OID 33663)
+-- Name: consumo consumo_id_pedido_id_producto_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.consumo
+    ADD CONSTRAINT consumo_id_pedido_id_producto_key UNIQUE (id_pedido, id_producto);
+
+
+--
+-- TOC entry 4773 (class 2606 OID 33661)
+-- Name: consumo consumo_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.consumo
+    ADD CONSTRAINT consumo_pkey PRIMARY KEY (id_detalle);
+
+
+--
+-- TOC entry 4761 (class 2606 OID 33596)
+-- Name: empleado empleado_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.empleado
+    ADD CONSTRAINT empleado_pkey PRIMARY KEY (id_empleado);
+
+
+--
+-- TOC entry 4775 (class 2606 OID 33684)
+-- Name: factura factura_id_pedido_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.factura
+    ADD CONSTRAINT factura_id_pedido_key UNIQUE (id_pedido);
+
+
+--
+-- TOC entry 4777 (class 2606 OID 33682)
+-- Name: factura factura_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.factura
+    ADD CONSTRAINT factura_pkey PRIMARY KEY (id_factura);
+
+
+--
+-- TOC entry 4759 (class 2606 OID 33588)
+-- Name: mesa mesa_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.mesa
+    ADD CONSTRAINT mesa_pkey PRIMARY KEY (id_mesa);
+
+
+--
+-- TOC entry 4779 (class 2606 OID 33697)
+-- Name: pago pago_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pago
+    ADD CONSTRAINT pago_pkey PRIMARY KEY (id_pago);
+
+
+--
+-- TOC entry 4769 (class 2606 OID 33639)
+-- Name: pedido pedido_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pedido
+    ADD CONSTRAINT pedido_pkey PRIMARY KEY (id_pedido);
+
+
+--
+-- TOC entry 4765 (class 2606 OID 33612)
+-- Name: producto producto_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.producto
+    ADD CONSTRAINT producto_pkey PRIMARY KEY (id_producto);
+
+
+--
+-- TOC entry 4767 (class 2606 OID 33621)
+-- Name: reserva reserva_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reserva
+    ADD CONSTRAINT reserva_pkey PRIMARY KEY (id_reserva);
+
+
+--
+-- TOC entry 4791 (class 2606 OID 33712)
+-- Name: cierra_caja cierra_caja_id_empleado_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cierra_caja
+    ADD CONSTRAINT cierra_caja_id_empleado_fkey FOREIGN KEY (id_empleado) REFERENCES public.empleado(id_empleado);
+
+
+--
+-- TOC entry 4787 (class 2606 OID 33664)
+-- Name: consumo consumo_id_pedido_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.consumo
+    ADD CONSTRAINT consumo_id_pedido_fkey FOREIGN KEY (id_pedido) REFERENCES public.pedido(id_pedido);
+
+
+--
+-- TOC entry 4788 (class 2606 OID 33669)
+-- Name: consumo consumo_id_producto_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.consumo
+    ADD CONSTRAINT consumo_id_producto_fkey FOREIGN KEY (id_producto) REFERENCES public.producto(id_producto);
+
+
+--
+-- TOC entry 4789 (class 2606 OID 33685)
+-- Name: factura factura_id_pedido_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.factura
+    ADD CONSTRAINT factura_id_pedido_fkey FOREIGN KEY (id_pedido) REFERENCES public.pedido(id_pedido);
+
+
+--
+-- TOC entry 4790 (class 2606 OID 33698)
+-- Name: pago pago_id_factura_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pago
+    ADD CONSTRAINT pago_id_factura_fkey FOREIGN KEY (id_factura) REFERENCES public.factura(id_factura);
+
+
+--
+-- TOC entry 4784 (class 2606 OID 33640)
+-- Name: pedido pedido_id_cliente_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pedido
+    ADD CONSTRAINT pedido_id_cliente_fkey FOREIGN KEY (id_cliente) REFERENCES public.cliente(id_cliente);
+
+
+--
+-- TOC entry 4785 (class 2606 OID 33645)
+-- Name: pedido pedido_id_empleado_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pedido
+    ADD CONSTRAINT pedido_id_empleado_fkey FOREIGN KEY (id_empleado) REFERENCES public.empleado(id_empleado);
+
+
+--
+-- TOC entry 4786 (class 2606 OID 33650)
+-- Name: pedido pedido_id_mesa_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pedido
+    ADD CONSTRAINT pedido_id_mesa_fkey FOREIGN KEY (id_mesa) REFERENCES public.mesa(id_mesa);
+
+
+--
+-- TOC entry 4782 (class 2606 OID 33622)
+-- Name: reserva reserva_id_cliente_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reserva
+    ADD CONSTRAINT reserva_id_cliente_fkey FOREIGN KEY (id_cliente) REFERENCES public.cliente(id_cliente);
+
+
+--
+-- TOC entry 4783 (class 2606 OID 33627)
+-- Name: reserva reserva_id_mesa_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reserva
+    ADD CONSTRAINT reserva_id_mesa_fkey FOREIGN KEY (id_mesa) REFERENCES public.mesa(id_mesa);
+
+
+-- Completed on 2025-11-01 17:35:40
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict fy8FLwZeI68qhaM8L3V0OzV7bTfmecjb3odfhTB3r4QdhqPUalmfNGyI8zM0K3k
+

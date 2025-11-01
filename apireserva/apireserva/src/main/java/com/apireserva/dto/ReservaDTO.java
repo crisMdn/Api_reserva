@@ -1,7 +1,8 @@
 // src/main/java/com/apireserva/dto/ReservaDTO.java
 package com.apireserva.dto;
 
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Column;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -19,9 +20,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class ReservaDTO {
 
     @NotNull(message = "La fecha/hora es obligatoria")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate fecha_reservada;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Column(name = "fecha_reservada")
+    private LocalDateTime fecha_reservada;
 
     @NotNull(message = "El número de personas es obligatorio")
     @Min(value = 1, message = "Mínimo 1 persona")
@@ -36,8 +37,18 @@ public class ReservaDTO {
     @Size(max = 20, message = "Máximo 20 caracteres")
     private String turno;
 
+    @NotNull(message = "Debe indicar el ID de la mesa reservada")
+    private Long id_mesa;
+
     @NotNull(message = "Debe indicar el ID del cliente")
     private Long id_cliente;
 
-   
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime created_at;
+
+    @PrePersist
+    protected void onCreate() {
+        this.created_at = LocalDateTime.now();
+    }
+
 }

@@ -1,9 +1,11 @@
 package com.apireserva.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*; //se usa para marcar la clase como entidad en la bs, y JPA se encargara de maquear la clase a una tabla 
 import lombok.Data; //se usa para generar get,set y otros metodos. 
@@ -23,12 +25,14 @@ public class Reserva {
     @Column(name = "id_reserva") // ← este nombre debe coincidir con la base de datos
     private Long id_reserva; 
 
-    @ManyToOne //se agrego; para indicar que una reserva esta asociado a un unico cliente; ademas 
-    @JoinColumn(name = "id_cliente") //le decimos a la bs en que columna se guardara la referencia del cliente (el  ID) 
-    private Cliente cliente; // relación con entidad Cliente; muchos a uno 
+    //se agrego; para indicar que una reserva esta asociado a un unico cliente; ademas
+    @ManyToOne
+    @JoinColumn(name = "id_cliente", nullable = false) //le decimos a la bs en que columna se guardara la referencia del cliente (el  ID)
+    private Cliente cliente;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "fecha_reservada")
-    private LocalDate fecha_reservada; //fechas con formato ISO, igual que el DTE, permite a sql filtrar por fecha/hora en consultas. sin converitr a texto. 
+    private LocalDateTime fecha_reservada; //fechas con formato ISO, igual que el DTE, permite a sql filtrar por fecha/hora en consultas. sin converitr a texto.
 
     private Integer personas;
 
@@ -38,5 +42,17 @@ public class Reserva {
     @Column(length = 20)
     private String turno;
 
+
+    @Column(name = "id_mesa", nullable = false)
+    private Long id_mesa;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime created_at;
+
+    @PrePersist
+    protected void onCreate() {
+        this.created_at = LocalDateTime.now();
+    }
 
 }

@@ -1,8 +1,10 @@
 package com.apireserva.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,7 +22,7 @@ public class Cliente {
     @Id //anotaciones de mapeo JPA. INdica como se relaciona con la base de datos. 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cliente") //se agrego para poder buscar a un cliente con su id
-    private Long id;
+    private Long id_cliente;
 
     //NOTA: LAS VALIDACIONES FUERON PASADAS A LOS DTO. 
 
@@ -39,5 +41,15 @@ public class Cliente {
     private List<Reserva> reservas; 
 
     private String telefono;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime created_at;
+
+    @PrePersist
+    protected void onCreate() {
+        this.created_at = LocalDateTime.now();
+    }
+
 
 }
