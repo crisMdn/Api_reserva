@@ -16,7 +16,7 @@ pipeline {
         stage('Clonar repositorio') {
             steps {
                 echo '🔄 Clonando repositorio...'
-                git branch: 'main', url: 'https://github.com/crisMdn/Api_reserva.git'
+                git branch: 'pruebas', url: 'https://github.com/crisMdn/Api_reserva.git'
             }
         }
 
