@@ -2,6 +2,7 @@ package com.apireserva.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;//representa codigos de estado hhtp(200, 2001, 401, etc). 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -40,4 +41,18 @@ public class ClienteControlador {
     public void eliminar(@PathVariable Long id) {
         service.eliminar(id);
     }
+
+    // PUT → Actualiza un cliente existente por su ID
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteDTO> actualizar(@PathVariable Long id, @RequestBody ClienteDTO dto) {
+    try {
+        // Llama al servicio para actualizar y devuelve 200 OK con el nuevo objeto
+        return ResponseEntity.ok(service.actualizar(id, dto));
+    } catch (RuntimeException e) {
+        // Si no existe el cliente, devuelve 404
+        return ResponseEntity.notFound().build();
+    }
+}
+
+    
 }

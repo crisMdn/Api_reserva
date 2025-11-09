@@ -52,4 +52,24 @@ public class ClienteService {
     public void eliminar(Long id) { // long signica la capacidad de longitud del id (tipo de dato), ID es lo que se necesita para eliminar 
         repository.deleteById(id); // Metodo Borrado por id. 
     }
+
+    // Actualiza un cliente existente usando DTO
+public ClienteDTO actualizar(Long id, ClienteDTO clienteDTO) {
+    // Busca el cliente por ID, si no existe lanza excepción
+    Cliente cliente = repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+    // Actualiza los campos con la info del DTO
+    cliente.setNombre_cliente(clienteDTO.getNombre_cliente());
+    cliente.setCorreo(clienteDTO.getCorreo());
+    cliente.setTelefono(clienteDTO.getTelefono());
+
+    // Guarda los cambios en la base
+    Cliente actualizado = repository.save(cliente);
+
+    // Devuelve el resultado como DTO
+    return modelMapper.map(actualizado, ClienteDTO.class);
+}
+
+
 } 
