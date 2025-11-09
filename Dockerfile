@@ -1,5 +1,6 @@
 # Imagen base con Java 17
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
+
 
 # Instalar Maven
 RUN apt-get update && apt-get install -y maven
