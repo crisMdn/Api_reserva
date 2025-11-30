@@ -32,19 +32,19 @@ public class Reserva {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "fecha_reservada")
-    private LocalDateTime fecha_reservada; //fechas con formato ISO, igual que el DTE, permite a sql filtrar por fecha/hora en consultas. sin converitr a texto.
+    private LocalDateTime fechaReservada; //fechas con formato ISO, igual que el DTE, permite a sql filtrar por fecha/hora en consultas. sin converitr a texto.
 
     private Integer personas;
 
     @Column(length = 25)
-    private String estado_reserva; 
+    private String estadoReserva;
 
     @Column(length = 20)
     private String turno;
 
-
-    @Column(name = "id_mesa", nullable = false)
-    private Long id_mesa;
+    @ManyToOne
+    @JoinColumn(name = "id_mesa", nullable = false)
+    private Mesa mesa;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "created_at", updatable = false)

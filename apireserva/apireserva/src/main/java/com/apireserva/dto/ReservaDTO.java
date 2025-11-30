@@ -11,8 +11,6 @@ import java.time.LocalDateTime; //libreria para validar de fecha/tiempo.
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,7 +20,7 @@ public class ReservaDTO {
     @NotNull(message = "La fecha/hora es obligatoria")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "fecha_reservada")
-    private LocalDateTime fecha_reservada;
+    private LocalDateTime fechaReservada;
 
     @NotNull(message = "El número de personas es obligatorio")
     @Min(value = 1, message = "Mínimo 1 persona")
@@ -31,14 +29,14 @@ public class ReservaDTO {
 
     @NotNull(message = "El estado de la reserva es obligatorio")
     @Size(max = 25, message = "Máximo 25 caracteres")
-    private String estado_reserva;
+    private String estadoReserva;
 
     @NotNull(message = "Debe indicar el turno")
     @Size(max = 20, message = "Máximo 20 caracteres")
     private String turno;
 
     @NotNull(message = "Debe indicar el ID de la mesa reservada")
-    private Long id_mesa;
+    private Long idMesa;
 
     @NotNull(message = "Debe indicar el ID del cliente")
     private Long id_cliente;

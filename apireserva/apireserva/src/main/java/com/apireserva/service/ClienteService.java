@@ -18,7 +18,7 @@ public class ClienteService {
 
     private final Clienterepository repository;  // Inyección del atributo repository, para que hable con la base de datos. 
 
-    private final ModelMapper modelMapper;  //Inyeccion ModelMapper para convertir facilmiente entre cliente a clienteDTO. 
+    private final ModelMapper modelMapper;  //Inyeccion ModelMapper para convertir facilmente entre cliente a clienteDTO.
 
     //modificacion del metodo, devuelve una lista de DTO, no de entidades. por que no devuelve directamente los datos de MODEL. 
     public List<ClienteDTO> listar() {
@@ -32,7 +32,7 @@ public class ClienteService {
                 .collect(Collectors.toList()); 
     } 
 
-    //se agrego metodo para buscar a un cliente por su id
+    //Metodo para buscar a un cliente por su id
     public ClienteDTO obtenerPorId(Long id) {
     return repository.findById(id)
             .map(cliente -> modelMapper.map(cliente, ClienteDTO.class))
@@ -40,11 +40,8 @@ public class ClienteService {
 }
 
 
-//esto fue un flujo, un pipeline =tuberia de procesos
-//.collect es una operacion terminal, lo anterior son operaciones intermedias, collect activa y finaliza el pipeline.
 
-
-    //Este método guarda un cliente pero usando DTO
+    //Este metodo guarda un cliente mediante ClienteDTO
     public ClienteDTO guardar(ClienteDTO clienteDTO) { //Cliente = tipo de dato (clase instanciada en model) , cliente = tipo de parametro (variable)
 
         //--Convierte el DTO recibido en una entidad Cliente (para poder guardarla)
@@ -57,7 +54,26 @@ public class ClienteService {
 
 
 
-    public void eliminar(Long id) { // long signica la capacidad de longitud del id (tipo de dato), ID es lo que se necesita para eliminar 
-        repository.deleteById(id); // Metodo Borrado por id. 
+    public void eliminar(Long id) { // long significa la capacidad de longitud del id (tipo de dato), ID es lo que se necesita para eliminar
+        repository.deleteById(id); // Metodo Borrado por id.
+
+    }
+
+    // Actualiza un cliente existente usando DTO
+    public ClienteDTO actualizar(Long id, ClienteDTO clienteDTO) {
+        // Busca el cliente por ID, si no existe lanza excepción
+        Cliente cliente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+        // Actualiza los campos con la info del DTO
+        cliente.setNombre_cliente(clienteDTO.getNombre_cliente());
+        cliente.setCorreo(clienteDTO.getCorreo());
+        cliente.setTelefono(clienteDTO.getTelefono());
+
+        // Guarda los cambios en la base
+        Cliente actualizado = repository.save(cliente);
+
+        // Devuelve el resultado como DTO
+        return modelMapper.map(actualizado, ClienteDTO.class);
     }
 } 
